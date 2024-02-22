@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyBzz1EOpRgrJvk_7NoTu1LXWDKm0YVaP_k</string>
+	<key>GCM_SENDER_ID</key>
+	<string>837621467675</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.africaningenuity.topChoir</string>
+	<key>PROJECT_ID</key>
+	<string>top-choir-project</string>
+	<key>STORAGE_BUCKET</key>
+	<string>top-choir-project.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:837621467675:ios:913a7761f8f3186e31c6be</string>
+</dict>
+</plist>
