@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:top_choir/add_song_screen.dart';
 
 import 'model/Song.dart';
@@ -27,7 +29,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
@@ -58,7 +59,33 @@ class _HomeScreenState extends State<HomeScreen> {
               icon: const Icon(Icons.logout))
         ],
       ),
-      body: const Center(),
+      body: StreamBuilder<QuerySnapshot<Song>>(
+        stream: FirebaseFirestore.instance
+            .collection('Songs')
+            .withConverter<Song>(
+              fromFirestore: (snapshot, _) => Song.fromJson(snapshot.data()!),
+              toFirestore: (model, _) => model.toJson(),
+            )
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          var documents = snapshot.data?.docs;
+          if (documents == null || documents.isEmpty) {
+            return const Center(
+              child: Text('No Songs Added Yet'),
+            );
+          }
+          return ListView.builder(
+              itemCount: documents.length,
+              itemBuilder: (context, index) {
+                var song = documents[index].data();
+                return ListTile(
+                    title: Text(song.title), subtitle: Text(song.author));
+              });
+        },
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context,
