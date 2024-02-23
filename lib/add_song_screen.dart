@@ -15,6 +15,11 @@ class AddSongScreen extends StatefulWidget {
 class _AddSongScreenState extends State<AddSongScreen> {
   final titleController = TextEditingController();
   final authorController = TextEditingController();
+  final keyController = TextEditingController();
+  final versesSolfaController = TextEditingController();
+  final versesLyricsController = TextEditingController();
+  final chorusSolfaController = TextEditingController();
+  final chorusLyricsController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -33,67 +38,108 @@ class _AddSongScreenState extends State<AddSongScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: Column(
+          child: ListView(
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: TextFormField(
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
-                      }
-                      return null;
-                    },
-                    controller: titleController,
-                    decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: "Enter the song title")),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: TextFormField(
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
-                      }
-                      return null;
-                    },
-                    controller: authorController,
-                    decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: "Enter the author")),
-              ),
+              CommonInputField(
+                  textController: keyController, label: "Enter the Key"),
+              CommonInputField(
+                  textController: titleController, label: "Enter the title"),
+              CommonInputField(
+                  textController: authorController, label: "Enter the author"),
+              const SizedBox(height: 24.0),
+              const SizedBox(width: double.infinity, child: Text("Verses", textAlign: TextAlign.center)),
+              CommonInputField(
+                  textController: versesSolfaController,
+                  label: "Enter the Solfas"),
+              CommonInputField(
+                  textController: versesLyricsController,
+                  label:
+                      "Enter the verses separating each verse by a paragraph"),
+              const SizedBox(height: 24.0),
+              const SizedBox(width: double.infinity, child: Text("Chorus", textAlign: TextAlign.center)),
+              CommonInputField(
+                  textController: chorusSolfaController,
+                  label: "Enter the Solfas"),
+              CommonInputField(
+                  textController: chorusLyricsController,
+                  label: "Enter the lyrics")
             ],
           ),
         ),
       ),
       persistentFooterButtons: [
-        ElevatedButton(
-            onPressed: () async {
-              if (_formKey.currentState!.validate()) {
-                Song song = Song(
-                    title: titleController.text,
-                    author: authorController.text,
-                    dateCreated: DateTime.now());
-                await FirebaseFirestore.instance
-                    .collection('Songs')
-                    .add(song.toJson());
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Processing Data')),
-                );
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  Song song = Song(
+                      key: keyController.text,
+                      title: titleController.text,
+                      author: authorController.text,
+                      verseSolfas: versesSolfaController.text,
+                      verseLyrics: versesLyricsController.text,
+                      chorusSolfas: chorusSolfaController.text,
+                      chorusLyrics: chorusLyricsController.text,
+                      dateCreated: DateTime.now());
+                  await FirebaseFirestore.instance
+                      .collection('Songs')
+                      .add(song.toJson());
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Processing Data')),
+                  );
 
-                Navigator.pop(context);
-              }
-            },
-            child: const Text("Create"))
+                  Navigator.pop(context);
+                }
+              },
+              child: const Text("Create")),
+        ),
       ],
     );
   }
 
   @override
   void dispose() {
+    keyController.dispose();
     titleController.dispose();
     authorController.dispose();
+    versesSolfaController.dispose();
+    versesLyricsController.dispose();
+    chorusSolfaController.dispose();
+    chorusLyricsController.dispose();
     super.dispose();
+  }
+}
+
+class CommonInputField extends StatelessWidget {
+  const CommonInputField({
+    super.key,
+    required this.textController,
+    required this.label,
+  });
+
+  final TextEditingController textController;
+  final String label;
+  // Only a Sinner
+  // James M.Gray
+  // s: s-,s/s.s:-d | d:d-,d/d:- | t:t-,d/r.r:-t | t:t-,s/s:-d':s-,s/d'.d:- | l:r-,r/l:-.l | s:r-, t/d'.m | f:r/m:-
+  // Naught have I gotten, but what I received. Grace hath bestowed it since I have believed. Boasting excluded, Pride I abase. I am ony a Sinner saved by grace.
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextFormField(
+          keyboardType: TextInputType.multiline,
+          maxLines: null,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter some text';
+            }
+            return null;
+          },
+          controller: textController,
+          decoration: InputDecoration(
+              border: const UnderlineInputBorder(), labelText: label)),
+    );
   }
 }

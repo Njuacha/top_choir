@@ -81,8 +81,13 @@ class _HomeScreenState extends State<HomeScreen> {
               itemCount: documents.length,
               itemBuilder: (context, index) {
                 var song = documents[index].data();
-                return ListTile(
-                    title: Text(song.title), subtitle: Text(song.author));
+                return Column(
+                  children: [
+                    ListTile(
+                        title: Text(song.title), subtitle: Text(song.author)),
+                    const Divider(),
+                  ],
+                );
               });
         },
       ),
