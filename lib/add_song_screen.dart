@@ -13,9 +13,9 @@ class AddSongScreen extends StatefulWidget {
 }
 
 class _AddSongScreenState extends State<AddSongScreen> {
+  final keyController = TextEditingController();
   final titleController = TextEditingController();
   final authorController = TextEditingController();
-  final keyController = TextEditingController();
   final versesSolfaController = TextEditingController();
   final versesLyricsController = TextEditingController();
   final chorusSolfaController = TextEditingController();
@@ -24,6 +24,18 @@ class _AddSongScreenState extends State<AddSongScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var oldSong = widget.song;
+
+    if (oldSong != null) {
+      keyController.text = oldSong.key;
+      titleController.text = oldSong.title;
+      authorController.text = oldSong.author;
+      versesLyricsController.text = oldSong.verseLyrics;
+      versesSolfaController.text = oldSong.verseSolfas;
+      chorusLyricsController.text = oldSong.chorusLyrics;
+      chorusSolfaController.text = oldSong.chorusSolfas;
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Add a New Song"),
@@ -82,9 +94,14 @@ class _AddSongScreenState extends State<AddSongScreen> {
                       chorusSolfas: chorusSolfaController.text,
                       chorusLyrics: chorusLyricsController.text,
                       dateCreated: DateTime.now());
-                  await FirebaseFirestore.instance
-                      .collection('Songs')
-                      .add(song.toJson());
+                  if (oldSong == null) {
+                    await FirebaseFirestore.instance
+                        .collection('Songs')
+                        .add(song.toJson());
+                  } else {
+                    // TODO edit old song
+                  }
+
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Processing Data')),
                   );
@@ -115,11 +132,12 @@ class CommonInputField extends StatelessWidget {
   const CommonInputField({
     super.key,
     required this.textController,
-    required this.label,
+    required this.label, this.text,
   });
 
   final TextEditingController textController;
   final String label;
+  final String? text;
   // Only a Sinner
   // James M.Gray
   // s: s-,s/s.s:-d | d:d-,d/d:- | t:t-,d/r.r:-t | t:t-,s/s:-d':s-,s/d'.d:- | l:r-,r/l:-.l | s:r-, t/d'.m | f:r/m:-
@@ -129,6 +147,7 @@ class CommonInputField extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextFormField(
+        initialValue: text,
           keyboardType: TextInputType.multiline,
           maxLines: null,
           validator: (value) {

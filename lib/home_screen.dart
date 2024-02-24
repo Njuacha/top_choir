@@ -5,8 +5,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:top_choir/add_song_screen.dart';
+import 'package:top_choir/view_song_screen.dart';
 
-import 'model/Song.dart';
+import 'model/song.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key, required this.title}) : super(key: key);
@@ -84,7 +85,24 @@ class _HomeScreenState extends State<HomeScreen> {
                 return Column(
                   children: [
                     ListTile(
-                        title: Text(song.title), subtitle: Text(song.author)),
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => ViewSongScreen(song: song)));
+                      },
+                        title: Text(song.title), subtitle: Text(song.author),
+                    trailing: PopupMenuButton<int>(
+                      onSelected: (value) {
+                        if(value == 0) {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => AddSongScreen(song: song)));
+                        }
+                      },
+                      itemBuilder: (BuildContext context) {
+                        return <PopupMenuEntry<int>>[
+                          PopupMenuItem(value: 0, child: Text("Edit")),
+                          PopupMenuDivider(),
+                          PopupMenuItem(value: 1, child: Text("Delete"))
+                        ];
+                      },
+                    ),),
                     const Divider(),
                   ],
                 );
