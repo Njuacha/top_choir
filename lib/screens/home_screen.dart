@@ -124,7 +124,11 @@ class GroupsSection extends StatelessWidget {
                           if (value == 0) {
                             MyNavUtils.navigateTo(context, AddGroupScreen(group: group));
                           } else if (value == 1) {
-
+                            // TODO show dialog to user warning user that deleting a group is irreversible
+                            var userId = MyFirebaseUtils.userId;
+                            if (userId != null) {
+                              Repository.deleteGroup(group.id, userId);
+                            }
                           }
                         },
                         itemBuilder: (BuildContext context) {

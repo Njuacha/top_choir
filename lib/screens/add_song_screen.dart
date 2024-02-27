@@ -18,10 +18,8 @@ class _AddSongScreenState extends State<AddSongScreen> {
   final keyController = TextEditingController();
   final titleController = TextEditingController();
   final authorController = TextEditingController();
-  final versesSolfaController = TextEditingController();
-  final versesLyricsController = TextEditingController();
-  final chorusSolfaController = TextEditingController();
-  final chorusLyricsController = TextEditingController();
+  final versesController = TextEditingController();
+  final chorusController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -33,10 +31,8 @@ class _AddSongScreenState extends State<AddSongScreen> {
       keyController.text = oldSong.key;
       titleController.text = oldSong.title;
       authorController.text = oldSong.author;
-      versesLyricsController.text = oldSong.verseLyrics;
-      versesSolfaController.text = oldSong.verseSolfas;
-      chorusLyricsController.text = oldSong.chorusLyrics;
-      chorusSolfaController.text = oldSong.chorusSolfas;
+      versesController.text = oldSong.verse;
+      chorusController.text = oldSong.chorus;
       buttonTitle = 'Save Changes';
     }
 
@@ -68,14 +64,14 @@ class _AddSongScreenState extends State<AddSongScreen> {
                   width: double.infinity,
                   child: Text("Verses", textAlign: TextAlign.center)),
               CommonInputField(
-                  textController: versesSolfaController,
+                  textController: versesController,
                   label: "Type Verses and Solfas underneath each line"),
               const SizedBox(height: 24.0),
               const SizedBox(
                   width: double.infinity,
                   child: Text("Chorus", textAlign: TextAlign.center)),
               CommonInputField(
-                  textController: chorusSolfaController,
+                  textController: chorusController,
                   label: "Type the Chorus and Sofas underneath each line"),
             ],
           ),
@@ -84,7 +80,7 @@ class _AddSongScreenState extends State<AddSongScreen> {
       persistentFooterButtons: [
         SizedBox(
           width: double.infinity,
-          child: ElevatedButton(
+          child: FilledButton(
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -94,10 +90,8 @@ class _AddSongScreenState extends State<AddSongScreen> {
                       key: keyController.text,
                       title: titleController.text,
                       author: authorController.text,
-                      verseSolfas: versesSolfaController.text,
-                      verseLyrics: versesLyricsController.text,
-                      chorusSolfas: chorusSolfaController.text,
-                      chorusLyrics: chorusLyricsController.text,
+                      verse: versesController.text,
+                      chorus: chorusController.text,
                       dateCreated: DateTime.now());
                   if (oldSong == null) {
                     await Repository.addSong(song, widget.groupId);
@@ -118,10 +112,8 @@ class _AddSongScreenState extends State<AddSongScreen> {
     keyController.dispose();
     titleController.dispose();
     authorController.dispose();
-    versesSolfaController.dispose();
-    versesLyricsController.dispose();
-    chorusSolfaController.dispose();
-    chorusLyricsController.dispose();
+    versesController.dispose();
+    chorusController.dispose();
     super.dispose();
   }
 }

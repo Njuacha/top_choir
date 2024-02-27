@@ -26,7 +26,6 @@ class Repository {
           )
           .snapshots();
 
-  // TODO find a way to use the ids to get the group doc
   static Stream<QuerySnapshot<Group>> getGroupsOwnedStream(String userId) =>
       firestoreInstance()
           .collection(groupsOwnedPath(userId))
@@ -45,7 +44,6 @@ class Repository {
               toFirestore: (model, _) => model.toJson())
           .snapshots();
 
-  // TODO find a way to only save the id in groupsOwned
   static addGroup(Group group, String userId) async {
     var result = await firestoreInstance().collection(groupsPath).add(
         group.toJson());
@@ -59,16 +57,17 @@ class Repository {
     await firestoreInstance().collection(groupsOwnedPath(userId)).doc(group.id).set(group.toJson());
   }
 
-  static deleteGroup(String groupId) async {
+  static deleteGroup(String groupId, String userId) async {
     // delete all the songs in the group
-    // TODO delete group
+    var querySnapshot = await firestoreInstance().collection(groupsSongsPath(groupId)).get();
+    for(final element in querySnapshot.docs) {
+      await element.reference.delete();
+    }
     // delete the group
+    await firestoreInstance().collection(groupsPath).doc(groupId).delete();
+    // delete group at groupOwned collection
+    await firestoreInstance().collection(groupsOwnedPath(userId)).doc(groupId).delete();
   }
-
-/*  static updateGroup(String groupId, Group group, String userId) async {
-    await firestoreInstance().collection(groupsPath).doc(groupId).set(data)
-
-  }*/
 
   static addSong(Song song, String groupId) async {
     await firestoreInstance()

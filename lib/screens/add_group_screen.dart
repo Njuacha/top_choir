@@ -47,7 +47,7 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
                   textController: groupNameController,
                   label: 'Enter a name for the group'),
               const SizedBox(height: 32),
-              ElevatedButton(
+              FilledButton(
                   onPressed: () async {
                     final userId = MyFirebaseUtils.userId;
                     var group =
@@ -57,6 +57,7 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
                         if (oldGroup == null) {
                           await Repository.addGroup(group, userId);
                         } else {
+                          group.id = oldGroup.id;
                           await Repository.updateGroup(group, userId);
                         }
                       }

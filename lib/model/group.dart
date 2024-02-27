@@ -16,7 +16,7 @@ class Group {
   Map<String, Object> toJson() {
     return {
       nameField : name,
-      picturePathField: picturePathField
+      picturePathField: picturePath
     };
   }
 
