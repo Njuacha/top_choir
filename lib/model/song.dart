@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Song {
+  String id = '';
   String key;
   String title;
   String author;
@@ -10,6 +11,7 @@ class Song {
   String chorusLyrics;
   DateTime dateCreated;
 
+  static const String idField = 'id';
   static const String keyField = 'key';
   static const String titleField = 'title';
   static const String authorField = 'author';
@@ -20,7 +22,8 @@ class Song {
   static const String dateCreatedField = 'dateCreated';
 
   Song(
-      {required this.key,
+      {this.id = "",
+      required this.key,
       required this.title,
       required this.author,
       required this.verseSolfas,
@@ -29,8 +32,9 @@ class Song {
       required this.chorusLyrics,
       required this.dateCreated});
 
-  Song.fromJson(Map<String, Object?> json)
+  Song.fromJson(Map<String, Object?> json, String id)
       : this(
+            id: id,
             key: json[keyField]! as String,
             title: json[titleField]! as String,
             author: json[authorField]! as String,
