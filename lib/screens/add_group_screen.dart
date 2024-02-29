@@ -53,6 +53,9 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
                     var group =
                         Group(name: groupNameController.text, picturePath: '');
                     if (_formKey.currentState!.validate()) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Processing Data')),
+                      );
                       if (userId != null) {
                         if (oldGroup == null) {
                           await Repository.addGroup(group, userId);

@@ -5,6 +5,7 @@ import 'package:top_choir/repository.dart';
 
 import '../model/song.dart';
 import '../reusable_components/common_input_field.dart';
+import '../utils/song_screen_utils.dart';
 
 class AddSongScreen extends StatefulWidget {
   const AddSongScreen({super.key, this.song, required this.groupId});
@@ -87,21 +88,8 @@ class _AddSongScreenState extends State<AddSongScreen>
                   textController: titleController, label: "Enter the title"),
               CommonInputField(
                   textController: authorController, label: "Enter the author"),
-              const SizedBox(height: 32.0),
-              SizedBox(
-                height: 50,
-                child: AppBar(
-                  bottom: TabBar(
-                    controller: _tabController,
-                    tabs: [
-                      Tab(text: 'Suprano'),
-                      Tab(text: 'Alto'),
-                      Tab(text: 'Tenor'),
-                      Tab(text: 'Bass')
-                    ],
-                  ),
-                ),
-              ),
+              const SizedBox(height: 24.0),
+              SongPartsTabBar(tabController: _tabController),
               Center(
                 child: getSelectedTab(_tabController.index),
               )

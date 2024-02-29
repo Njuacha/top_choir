@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:top_choir/model/song.dart';
+import 'package:top_choir/utils/song_screen_utils.dart';
 
 class ViewSongScreen extends StatefulWidget {
   const ViewSongScreen({super.key, required this.song});
@@ -68,21 +69,8 @@ class _ViewSongScreenState extends State<ViewSongScreen> with SingleTickerProvid
               )
             ],
           )),
-          const SizedBox(height: 32.0),
-          SizedBox(
-            height: 50,
-            child: AppBar(
-              bottom: TabBar(
-                controller: _tabController,
-                tabs: const [
-                  Tab(text: 'Suprano'),
-                  Tab(text: 'Alto'),
-                  Tab(text: 'Tenor'),
-                  Tab(text: 'Bass')
-                ],
-              ),
-            ),
-          ),
+          const SizedBox(height: 24.0),
+          SongPartsTabBar(tabController: _tabController),
           getPart(_tabController.index),
         ],
       ),
