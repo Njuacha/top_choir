@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:top_choir/utils/my_firebase_utils.dart';
 
@@ -14,7 +16,8 @@ class Repository {
 
   static String groupsSongsPath(String groupId) => "$groupsPath/$groupId/S";
 
-  static FirebaseFirestore firestoreInstance() => MyFirebaseUtils.firestoreInstance;
+  static FirebaseFirestore firestoreInstance() =>
+      MyFirebaseUtils.firestoreInstance;
 
   static Stream<QuerySnapshot<Song>> getSongsStream(String groupId) =>
       firestoreInstance()
@@ -26,47 +29,88 @@ class Repository {
           )
           .snapshots();
 
-  static Stream<QuerySnapshot<Group>> getGroupsOwnedStream(String userId) =>
+  static Stream<List<Group>> getGroupsOwnedStream(String userId) =>
       firestoreInstance()
           .collection(groupsOwnedPath(userId))
           .withConverter<Group>(
               fromFirestore: (snapshot, _) =>
                   Group.fromJson(snapshot.data()!, snapshot.id),
               toFirestore: (model, _) => model.toJson())
-          .snapshots();
+          .snapshots()
+          .map((event) {
+        List<Group> groups = [];
+        for (var doc in event.docs) {
+          groups.add(doc.data());
+        }
+        return groups;
+      });
 
-  static Stream<QuerySnapshot<Group>> getGroupsBelongStream(String userId) =>
+  static Stream<List<Group>> getGroupsBelongStream(String userId) =>
       firestoreInstance()
           .collection(groupsBelongPath(userId))
           .withConverter<Group>(
               fromFirestore: (snapshot, _) =>
                   Group.fromJson(snapshot.data()!, snapshot.id),
               toFirestore: (model, _) => model.toJson())
-          .snapshots();
+          .snapshots()
+          .asyncMap((event) async {
+        List<Group> groups = [];
+        for (var doc in event.docs) {
+          try {
+            var group = doc.data();
+            var actualGroupDoc = await firestoreInstance()
+                .collection(groupsPath)
+                .doc(group.id)
+                .get();
+            var actualGroup = Group.fromJson(actualGroupDoc.data()!, group.id);
+            groups.add(actualGroup);
+          } catch (e, stacktrace) {
+            log('error is loading groups belong: ${stacktrace.toString()}');
+          }
+        }
+        return groups;
+      });
 
-  static addGroup(Group group, String userId) async {
-    var result = await firestoreInstance().collection(groupsPath).add(
-        group.toJson());
-    await firestoreInstance().collection(groupsOwnedPath(userId))
+  static Future<String> addGroup(Group group, String userId) async {
+    var result =
+        await firestoreInstance().collection(groupsPath).add(group.toJson());
+    await firestoreInstance()
+        .collection(groupsOwnedPath(userId))
         .doc(result.id)
         .set(group.toJson());
+    return result.id;
   }
 
   static updateGroup(Group group, String userId) async {
-    await firestoreInstance().collection(groupsPath).doc(group.id).set(group.toJson(), SetOptions(merge: true));
-    await firestoreInstance().collection(groupsOwnedPath(userId)).doc(group.id).set(group.toJson());
+    await firestoreInstance()
+        .collection(groupsPath)
+        .doc(group.id)
+        .set(group.toJson(), SetOptions(merge: true));
+    await firestoreInstance()
+        .collection(groupsOwnedPath(userId))
+        .doc(group.id)
+        .set(group.toJson(), SetOptions(merge: true));
+  }
+
+  static Future<bool> isGroupExist(String id) async {
+    var doc = await firestoreInstance().collection(groupsPath).doc(id).get();
+    return doc.exists;
   }
 
   static deleteGroup(String groupId, String userId) async {
     // delete all the songs in the group
-    var querySnapshot = await firestoreInstance().collection(groupsSongsPath(groupId)).get();
-    for(final element in querySnapshot.docs) {
+    var querySnapshot =
+        await firestoreInstance().collection(groupsSongsPath(groupId)).get();
+    for (final element in querySnapshot.docs) {
       await element.reference.delete();
     }
     // delete the group
     await firestoreInstance().collection(groupsPath).doc(groupId).delete();
     // delete group at groupOwned collection
-    await firestoreInstance().collection(groupsOwnedPath(userId)).doc(groupId).delete();
+    await firestoreInstance()
+        .collection(groupsOwnedPath(userId))
+        .doc(groupId)
+        .delete();
   }
 
   static addSong(Song song, String groupId) async {
@@ -86,4 +130,13 @@ class Repository {
     firestoreInstance().collection(groupsSongsPath(groupId)).doc(id).delete();
   }
 
+  static void addToGroup(String groupId) {
+    final userId = MyFirebaseUtils.userId;
+    if (userId != null) {
+      firestoreInstance()
+          .collection(groupsBelongPath(userId))
+          .doc(groupId)
+          .set({});
+    }
+  }
 }

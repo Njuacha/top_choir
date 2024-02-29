@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:top_choir/model/song.dart';
 
 class ViewSongScreen extends StatelessWidget {
@@ -29,7 +27,8 @@ class ViewSongScreen extends StatelessWidget {
           )),
       body: ListView(
         children: [
-          CommonContainer(child: Column(
+          CommonContainer(
+              child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
@@ -89,8 +88,10 @@ class ViewSongScreen extends StatelessWidget {
 
 class CommonContainer extends StatelessWidget {
   const CommonContainer({
-    super.key, required this.child,
+    super.key,
+    required this.child,
   });
+
   final Widget child;
 
   @override

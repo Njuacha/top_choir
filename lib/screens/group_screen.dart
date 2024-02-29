@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
+import 'package:top_choir/reusable_components/common_center_text.dart';
 import 'package:top_choir/screens/add_song_screen.dart';
 import 'package:top_choir/repository.dart';
 import 'package:top_choir/screens/view_song_screen.dart';
+import 'package:top_choir/utils/my_encryption_utils.dart';
 import 'package:top_choir/utils/my_navigator_utils.dart';
 
 import '../model/group.dart';
@@ -27,12 +30,22 @@ class _GroupScreenState extends State<GroupScreen> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.group.name),
+        leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(Icons.arrow_back)),
         actions: [
           IconButton(
               onPressed: () {
-                Navigator.pop(context);
+                var groupCode = MyEncryptionUtils.createGroupCode(group.id);
+                Clipboard.setData(ClipboardData(text: groupCode)).then((_) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(
+                          "Group entry code copied to clipboard. Send this any one you wish to join the group")));
+                });
               },
-              icon: const Icon(Icons.arrow_back))
+              icon: const Icon(Icons.person_add_rounded))
         ],
       ),
       body: StreamBuilder<QuerySnapshot<Song>>(
@@ -43,9 +56,7 @@ class _GroupScreenState extends State<GroupScreen> {
           }
           var documents = snapshot.data?.docs;
           if (documents == null || documents.isEmpty) {
-            return const Center(
-              child: Text('No Songs Added Yet'),
-            );
+            return const CommonCenterText(title: 'No Songs Added Yet');
           }
           return ListView.builder(
               itemCount: documents.length,
@@ -68,7 +79,9 @@ class _GroupScreenState extends State<GroupScreen> {
                               onSelected: (value) async {
                                 if (value == 0) {
                                   MyNavUtils.navigateTo(
-                                      context, AddSongScreen(song: song, groupId: group.id));
+                                      context,
+                                      AddSongScreen(
+                                          song: song, groupId: group.id));
                                 } else if (value == 1) {
                                   Repository.deleteSong(song.id, group.id);
                                 }
@@ -89,7 +102,8 @@ class _GroupScreenState extends State<GroupScreen> {
       floatingActionButton: widget.isOwner
           ? FloatingActionButton(
               onPressed: () {
-                MyNavUtils.navigateTo(context, AddSongScreen(groupId: widget.group.id));
+                MyNavUtils.navigateTo(
+                    context, AddSongScreen(groupId: widget.group.id));
               },
               tooltip: 'Add Song',
               child: const Icon(Icons.add),

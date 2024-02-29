@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/foundation.dart';
 
 class MyFirebaseUtils {
@@ -11,7 +12,6 @@ class MyFirebaseUtils {
     if (kDebugMode) {
       instance.useFirestoreEmulator('127.0.0.1', 8080);
     }
-    
     return instance;
   }
 
@@ -24,4 +24,14 @@ class MyFirebaseUtils {
   }
 
   static final userId = firebaseAuthInstance.currentUser?.uid;
+
+  static Future<ShortDynamicLink> createDynamicLink(String groupId) =>
+      FirebaseDynamicLinks.instance.buildShortLink(DynamicLinkParameters(
+        link: Uri.parse("https://topchoir.page.link/$groupId"),
+        uriPrefix: "https://topchoir.page.link",
+        androidParameters: const AndroidParameters(
+            packageName: "com.africaningenuity.top_choir"),
+        iosParameters:
+            const IOSParameters(bundleId: "com.africaningenuity.top_choir"),
+      ));
 }
