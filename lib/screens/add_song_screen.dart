@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:top_choir/repository.dart';
 
 import '../model/song.dart';
@@ -14,13 +16,34 @@ class AddSongScreen extends StatefulWidget {
   State<AddSongScreen> createState() => _AddSongScreenState();
 }
 
-class _AddSongScreenState extends State<AddSongScreen> {
+class _AddSongScreenState extends State<AddSongScreen>
+    with SingleTickerProviderStateMixin {
   final keyController = TextEditingController();
   final titleController = TextEditingController();
   final authorController = TextEditingController();
-  final versesController = TextEditingController();
-  final chorusController = TextEditingController();
+  final sVersesController = TextEditingController();
+  final sChorusController = TextEditingController();
+  final aVersesController = TextEditingController();
+  final aChorusController = TextEditingController();
+  final tVersesController = TextEditingController();
+  final tChorusController = TextEditingController();
+  final bVersesController = TextEditingController();
+  final bChorusController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    _tabController = TabController(length: 4, vsync: this);
+    _tabController.addListener(_handleTabSelection);
+    super.initState();
+  }
+
+  _handleTabSelection() {
+    if (_tabController.indexIsChanging) {
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,11 +54,16 @@ class _AddSongScreenState extends State<AddSongScreen> {
       keyController.text = oldSong.key;
       titleController.text = oldSong.title;
       authorController.text = oldSong.author;
-      versesController.text = oldSong.verse;
-      chorusController.text = oldSong.chorus;
+      sVersesController.text = oldSong.sVerse;
+      sChorusController.text = oldSong.sChorus;
+      aVersesController.text = oldSong.aVerse;
+      aChorusController.text = oldSong.aChorus;
+      tVersesController.text = oldSong.tVerse;
+      tChorusController.text = oldSong.tChorus;
+      bVersesController.text = oldSong.bVerse;
+      bChorusController.text = oldSong.bChorus;
       buttonTitle = 'Save Changes';
     }
-
 
     return Scaffold(
       appBar: AppBar(
@@ -59,20 +87,24 @@ class _AddSongScreenState extends State<AddSongScreen> {
                   textController: titleController, label: "Enter the title"),
               CommonInputField(
                   textController: authorController, label: "Enter the author"),
-              const SizedBox(height: 24.0),
-              const SizedBox(
-                  width: double.infinity,
-                  child: Text("Verses", textAlign: TextAlign.center)),
-              CommonInputField(
-                  textController: versesController,
-                  label: "Type Verses and Solfas underneath each line"),
-              const SizedBox(height: 24.0),
-              const SizedBox(
-                  width: double.infinity,
-                  child: Text("Chorus", textAlign: TextAlign.center)),
-              CommonInputField(
-                  textController: chorusController,
-                  label: "Type the Chorus and Sofas underneath each line"),
+              const SizedBox(height: 32.0),
+              SizedBox(
+                height: 50,
+                child: AppBar(
+                  bottom: TabBar(
+                    controller: _tabController,
+                    tabs: [
+                      Tab(text: 'Suprano'),
+                      Tab(text: 'Alto'),
+                      Tab(text: 'Tenor'),
+                      Tab(text: 'Bass')
+                    ],
+                  ),
+                ),
+              ),
+              Center(
+                child: getSelectedTab(_tabController.index),
+              )
             ],
           ),
         ),
@@ -90,13 +122,20 @@ class _AddSongScreenState extends State<AddSongScreen> {
                       key: keyController.text,
                       title: titleController.text,
                       author: authorController.text,
-                      verse: versesController.text,
-                      chorus: chorusController.text,
+                      sVerse: sVersesController.text,
+                      sChorus: sChorusController.text,
+                      aVerse: aVersesController.text,
+                      aChorus: aChorusController.text,
+                      tVerse: tVersesController.text,
+                      tChorus: tChorusController.text,
+                      bVerse: bVersesController.text,
+                      bChorus: bChorusController.text,
                       dateCreated: DateTime.now());
                   if (oldSong == null) {
                     await Repository.addSong(song, widget.groupId);
                   } else {
-                    await Repository.updateSong(oldSong.id, song, widget.groupId);
+                    await Repository.updateSong(
+                        oldSong.id, song, widget.groupId);
                   }
                   Navigator.pop(context);
                 }
@@ -107,13 +146,72 @@ class _AddSongScreenState extends State<AddSongScreen> {
     );
   }
 
+  Part getSelectedTab(int index) {
+    var list = [
+      Part(
+          versesController: sVersesController,
+          chorusController: sChorusController),
+      Part(
+          versesController: aVersesController,
+          chorusController: aChorusController),
+      Part(
+          versesController: tVersesController,
+          chorusController: tChorusController),
+      Part(
+          versesController: bVersesController,
+          chorusController: bChorusController)
+    ];
+    return list[index];
+  }
+
   @override
   void dispose() {
     keyController.dispose();
     titleController.dispose();
     authorController.dispose();
-    versesController.dispose();
-    chorusController.dispose();
+    sVersesController.dispose();
+    sChorusController.dispose();
+    aVersesController.dispose();
+    aChorusController.dispose();
+    tVersesController.dispose();
+    tChorusController.dispose();
+    bVersesController.dispose();
+    bChorusController.dispose();
+    _tabController.dispose();
     super.dispose();
+  }
+}
+
+class Part extends StatelessWidget {
+  const Part({
+    super.key,
+    required this.versesController,
+    required this.chorusController,
+  });
+
+  final TextEditingController versesController;
+  final TextEditingController chorusController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const SizedBox(height: 24.0),
+        const SizedBox(
+            width: double.infinity,
+            child: Text("Verses", textAlign: TextAlign.center)),
+        CommonInputField(
+            textController: versesController,
+            label: "Type Verses and Solfas underneath each line"),
+        const SizedBox(height: 24.0),
+        const SizedBox(
+            width: double.infinity,
+            child: Text("Chorus", textAlign: TextAlign.center)),
+        CommonInputField(
+            textController: chorusController,
+            label: "Type the Chorus and Sofas underneath each line"),
+      ],
+    );
   }
 }

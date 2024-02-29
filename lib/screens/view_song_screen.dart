@@ -1,10 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:top_choir/model/song.dart';
 
-class ViewSongScreen extends StatelessWidget {
+class ViewSongScreen extends StatefulWidget {
   const ViewSongScreen({super.key, required this.song});
 
   final Song song;
+
+  @override
+  State<ViewSongScreen> createState() => _ViewSongScreenState();
+}
+
+class _ViewSongScreenState extends State<ViewSongScreen> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    _tabController = TabController(length: 4, vsync: this);
+    _tabController.addListener(_handleTabSelection);
+    super.initState();
+  }
+
+  _handleTabSelection() {
+    if (_tabController.indexIsChanging) {
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,53 +55,113 @@ class ViewSongScreen extends StatelessWidget {
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(song.title, style: headerThemes),
+                  Text(widget.song.title, style: headerThemes),
                   Text(
-                    song.key,
+                    widget.song.key,
                     style: headerThemes,
                   ),
                 ],
               ),
               Text(
-                song.author,
+                widget.song.author,
                 style: headerThemes,
               )
             ],
           )),
           const SizedBox(height: 32.0),
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "Verses",
-                style: headerThemes?.copyWith(color: Colors.black54),
-              )
-            ],
+          SizedBox(
+            height: 50,
+            child: AppBar(
+              bottom: TabBar(
+                controller: _tabController,
+                tabs: const [
+                  Tab(text: 'Suprano'),
+                  Tab(text: 'Alto'),
+                  Tab(text: 'Tenor'),
+                  Tab(text: 'Bass')
+                ],
+              ),
+            ),
           ),
-          CommonContainer(
-            child: SizedBox(
-                width: double.infinity,
-                child: Text(song.verse, style: bodyTheme)),
-          ),
-          const SizedBox(height: 32.0),
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "Chorus",
-                style: headerThemes?.copyWith(color: Colors.black54),
-              )
-            ],
-          ),
-          CommonContainer(
-            child: SizedBox(
-                width: double.infinity,
-                child: Text(song.chorus, style: bodyTheme)),
-          ),
+          getPart(_tabController.index),
         ],
       ),
+    );
+  }
+
+  ViewPart getPart(int index) {
+    var song = widget.song;
+    var list = [
+      ViewPart(verse: song.sVerse, chorus: song.sChorus),
+      ViewPart(verse: song.aVerse, chorus: song.aChorus),
+      ViewPart(verse: song.tVerse, chorus: song.tChorus),
+      ViewPart(verse: song.bVerse, chorus: song.bChorus),
+    ];
+    return list[index];
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+}
+
+class ViewPart extends StatelessWidget {
+  const ViewPart({
+    super.key,
+    required this.verse,
+    required this.chorus,
+  });
+
+  final String verse;
+  final String chorus;
+
+  @override
+  Widget build(BuildContext context) {
+    var headerThemes = Theme.of(context)
+        .textTheme
+        .titleMedium
+        ?.copyWith(color: Colors.black87);
+    var bodyTheme = Theme.of(context)
+        .textTheme
+        .titleMedium
+        ?.copyWith(color: Colors.black87);
+    return Column(
+      children: [
+        const SizedBox(height: 24.0),
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "Verses",
+              style: headerThemes?.copyWith(color: Colors.black54),
+            )
+          ],
+        ),
+        CommonContainer(
+          child: SizedBox(
+              width: double.infinity,
+              child: Text(verse, style: bodyTheme)),
+        ),
+        const SizedBox(height: 24.0),
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "Chorus",
+              style: headerThemes?.copyWith(color: Colors.black54),
+            )
+          ],
+        ),
+        CommonContainer(
+          child: SizedBox(
+              width: double.infinity,
+              child: Text(chorus, style: bodyTheme)),
+        ),
+      ],
     );
   }
 }
