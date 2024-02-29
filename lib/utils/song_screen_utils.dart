@@ -1,3 +1,4 @@
+import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'package:flutter/material.dart';
 
 class SongPartsTabBar extends StatelessWidget {
@@ -15,6 +16,7 @@ class SongPartsTabBar extends StatelessWidget {
       child: AppBar(
         bottom: TabBar(
           controller: _tabController,
+          indicator: const BubbleTabIndicator(),
           tabs: [
             Tab(text: 'Suprano'),
             Tab(text: 'Alto'),

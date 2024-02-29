@@ -11,7 +11,8 @@ class ViewSongScreen extends StatefulWidget {
   State<ViewSongScreen> createState() => _ViewSongScreenState();
 }
 
-class _ViewSongScreenState extends State<ViewSongScreen> with SingleTickerProviderStateMixin {
+class _ViewSongScreenState extends State<ViewSongScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -37,6 +38,13 @@ class _ViewSongScreenState extends State<ViewSongScreen> with SingleTickerProvid
         .textTheme
         .titleMedium
         ?.copyWith(color: Colors.black87);
+    var song = widget.song;
+    var list = [
+      ViewPart(verse: song.sVerse, chorus: song.sChorus),
+      ViewPart(verse: song.aVerse, chorus: song.aChorus),
+      ViewPart(verse: song.tVerse, chorus: song.tChorus),
+      ViewPart(verse: song.bVerse, chorus: song.bChorus),
+    ];
     return Scaffold(
       appBar: AppBar(
           title: const Text("Read Song"),
@@ -71,21 +79,10 @@ class _ViewSongScreenState extends State<ViewSongScreen> with SingleTickerProvid
           )),
           const SizedBox(height: 24.0),
           SongPartsTabBar(tabController: _tabController),
-          getPart(_tabController.index),
+          list[_tabController.index],
         ],
       ),
     );
-  }
-
-  ViewPart getPart(int index) {
-    var song = widget.song;
-    var list = [
-      ViewPart(verse: song.sVerse, chorus: song.sChorus),
-      ViewPart(verse: song.aVerse, chorus: song.aChorus),
-      ViewPart(verse: song.tVerse, chorus: song.tChorus),
-      ViewPart(verse: song.bVerse, chorus: song.bChorus),
-    ];
-    return list[index];
   }
 
   @override
@@ -130,8 +127,7 @@ class ViewPart extends StatelessWidget {
         ),
         CommonContainer(
           child: SizedBox(
-              width: double.infinity,
-              child: Text(verse, style: bodyTheme)),
+              width: double.infinity, child: Text(verse, style: bodyTheme)),
         ),
         const SizedBox(height: 24.0),
         Row(
@@ -146,8 +142,7 @@ class ViewPart extends StatelessWidget {
         ),
         CommonContainer(
           child: SizedBox(
-              width: double.infinity,
-              child: Text(chorus, style: bodyTheme)),
+              width: double.infinity, child: Text(chorus, style: bodyTheme)),
         ),
       ],
     );

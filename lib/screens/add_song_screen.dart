@@ -32,25 +32,15 @@ class _AddSongScreenState extends State<AddSongScreen>
   final bChorusController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   late TabController _tabController;
+  late String buttonTitle;
 
   @override
   void initState() {
     _tabController = TabController(length: 4, vsync: this);
     _tabController.addListener(_handleTabSelection);
-    super.initState();
-  }
+    buttonTitle = 'Create';
 
-  _handleTabSelection() {
-    if (_tabController.indexIsChanging) {
-      setState(() {});
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
     var oldSong = widget.song;
-    var buttonTitle = 'Create';
-
     if (oldSong != null) {
       keyController.text = oldSong.key;
       titleController.text = oldSong.title;
@@ -65,6 +55,33 @@ class _AddSongScreenState extends State<AddSongScreen>
       bChorusController.text = oldSong.bChorus;
       buttonTitle = 'Save Changes';
     }
+    super.initState();
+  }
+
+  _handleTabSelection() {
+    if (_tabController.indexIsChanging) {
+      setState(() {});
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var oldSong = widget.song;
+
+    final list = [
+      Part(
+          versesController: sVersesController,
+          chorusController: sChorusController),
+      Part(
+          versesController: aVersesController,
+          chorusController: aChorusController),
+      Part(
+          versesController: tVersesController,
+          chorusController: tChorusController),
+      Part(
+          versesController: bVersesController,
+          chorusController: bChorusController)
+    ];
 
     return Scaffold(
       appBar: AppBar(
@@ -91,7 +108,7 @@ class _AddSongScreenState extends State<AddSongScreen>
               const SizedBox(height: 24.0),
               SongPartsTabBar(tabController: _tabController),
               Center(
-                child: getSelectedTab(_tabController.index),
+                child: list[_tabController.index],
               )
             ],
           ),
@@ -132,24 +149,6 @@ class _AddSongScreenState extends State<AddSongScreen>
         ),
       ],
     );
-  }
-
-  Part getSelectedTab(int index) {
-    var list = [
-      Part(
-          versesController: sVersesController,
-          chorusController: sChorusController),
-      Part(
-          versesController: aVersesController,
-          chorusController: aChorusController),
-      Part(
-          versesController: tVersesController,
-          chorusController: tChorusController),
-      Part(
-          versesController: bVersesController,
-          chorusController: bChorusController)
-    ];
-    return list[index];
   }
 
   @override
