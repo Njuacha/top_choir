@@ -169,7 +169,7 @@ class _AddSongScreenState extends State<AddSongScreen>
   }
 }
 
-class Part extends StatelessWidget {
+class Part extends StatefulWidget {
   const Part({
     super.key,
     required this.versesController,
@@ -180,6 +180,11 @@ class Part extends StatelessWidget {
   final TextEditingController chorusController;
 
   @override
+  State<Part> createState() => _PartState();
+}
+
+class _PartState extends State<Part> {
+  @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -189,14 +194,14 @@ class Part extends StatelessWidget {
             width: double.infinity,
             child: Text("Verses", textAlign: TextAlign.center)),
         CommonInputField(
-            textController: versesController,
+            textController: widget.versesController,
             label: "Type Verses and Solfas underneath each line"),
         const SizedBox(height: 24.0),
         const SizedBox(
             width: double.infinity,
             child: Text("Chorus", textAlign: TextAlign.center)),
         CommonInputField(
-            textController: chorusController,
+            textController: widget.chorusController,
             label: "Type the Chorus and Sofas underneath each line"),
       ],
     );
