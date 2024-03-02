@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Song {
   String id = '';
   String key;
+  String tempo;
   String title;
   String author;
   String sVerse;
@@ -17,6 +18,7 @@ class Song {
 
   static const String idField = 'id';
   static const String keyField = 'key';
+  static const String tempoField = 'tempo';
   static const String titleField = 'title';
   static const String authorField = 'author';
   static const String sVerseField = 'sVerse';
@@ -32,6 +34,7 @@ class Song {
   Song(
       {this.id = "",
       required this.key,
+      required this.tempo,
       required this.title,
       required this.author,
       required this.sVerse,
@@ -48,6 +51,7 @@ class Song {
       : this(
             id: id,
             key: json[keyField]! as String,
+            tempo: json[tempoField] == null? '': json[tempoField] as String,
             title: json[titleField]! as String,
             author: json[authorField]! as String,
             sVerse: json[sVerseField]! as String,
@@ -63,6 +67,7 @@ class Song {
   Map<String, Object?> toJson() {
     return {
       keyField: key,
+      tempoField: tempo,
       titleField: title,
       authorField: author,
       sVerseField: sVerse,

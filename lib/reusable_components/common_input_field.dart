@@ -28,6 +28,8 @@ class CommonInputField extends StatelessWidget {
           },
           controller: textController,
           decoration: InputDecoration(
+            filled: true,
+              fillColor: Colors.white,
               border: const UnderlineInputBorder(), labelText: label)),
     );
   }

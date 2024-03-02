@@ -20,6 +20,7 @@ class AddSongScreen extends StatefulWidget {
 class _AddSongScreenState extends State<AddSongScreen>
     with SingleTickerProviderStateMixin {
   final keyController = TextEditingController();
+  final tempoController = TextEditingController();
   final titleController = TextEditingController();
   final authorController = TextEditingController();
   final sVersesController = TextEditingController();
@@ -43,6 +44,7 @@ class _AddSongScreenState extends State<AddSongScreen>
     var oldSong = widget.song;
     if (oldSong != null) {
       keyController.text = oldSong.key;
+      tempoController.text = oldSong.tempo;
       titleController.text = oldSong.title;
       authorController.text = oldSong.author;
       sVersesController.text = oldSong.sVerse;
@@ -99,8 +101,21 @@ class _AddSongScreenState extends State<AddSongScreen>
           key: _formKey,
           child: ListView(
             children: [
-              CommonInputField(
-                  textController: keyController, label: "Enter the Key"),
+              Row(
+                children: [
+                  Flexible(
+                    flex: 5,
+                    child: CommonInputField(
+                        textController: keyController, label: "Enter the Key"),
+                  ),
+                  const SizedBox(width: 16),
+                  Flexible(
+                    flex: 5,
+                    child: CommonInputField(
+                        textController: tempoController, label: "Enter the tempo"),
+                  ),
+                ],
+              ),
               CommonInputField(
                   textController: titleController, label: "Enter the title"),
               CommonInputField(
@@ -125,6 +140,7 @@ class _AddSongScreenState extends State<AddSongScreen>
                   );
                   Song song = Song(
                       key: keyController.text,
+                      tempo: tempoController.text,
                       title: titleController.text,
                       author: authorController.text,
                       sVerse: sVersesController.text,
@@ -154,6 +170,7 @@ class _AddSongScreenState extends State<AddSongScreen>
   @override
   void dispose() {
     keyController.dispose();
+    tempoController.dispose();
     titleController.dispose();
     authorController.dispose();
     sVersesController.dispose();

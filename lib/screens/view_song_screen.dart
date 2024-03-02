@@ -57,23 +57,28 @@ class _ViewSongScreenState extends State<ViewSongScreen>
       body: ListView(
         children: [
           CommonContainer(
-              child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Column(crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(widget.song.title, style: headerThemes),
                   Text(
-                    widget.song.key,
+                    widget.song.author,
                     style: headerThemes,
                   ),
                 ],
               ),
-              Text(
-                widget.song.author,
-                style: headerThemes,
+              Column(
+                children: [
+                  Text(
+                    widget.song.key,
+                    style: headerThemes,
+                  ),
+                  Text(
+                    widget.song.tempo,
+                    style: headerThemes,
+                  )
+                ],
               )
             ],
           )),

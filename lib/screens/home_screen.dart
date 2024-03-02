@@ -99,9 +99,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _displayJoinGroupDialog(BuildContext context, String groupCode, bool isInvalid) async {
 
-    TextEditingController _groupCodeTextController = TextEditingController(text: groupCode);
+    TextEditingController groupCodeTextController = TextEditingController(text: groupCode);
+    var formKey = GlobalKey<FormState>();
 
-    var _formKey = GlobalKey<FormState>();
     return showDialog(
       context: context,
       builder: (context) {
@@ -117,9 +117,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           content: Form(
-            key: _formKey,
+            key: formKey,
             child: TextFormField(
-              controller: _groupCodeTextController,
+              controller: groupCodeTextController,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter group code';
@@ -141,16 +141,16 @@ class _HomeScreenState extends State<HomeScreen> {
             TextButton(
               child: Text('JOIN'),
               onPressed: () async {
-                if (_formKey.currentState!.validate()) {
+                if (formKey.currentState!.validate()) {
                   var groupId = MyEncryptionUtils.extractGroupIdFromCode(
-                      _groupCodeTextController.text);
+                      groupCodeTextController.text);
                   var isGroupExist = await Repository.isGroupExist(groupId);
                   Navigator.pop(context);
                   if (isGroupExist) {
                     Repository.addToGroup(groupId);
                   } else {
                     // TODO find way to make dialog stateful and change error text without recreating dialog
-                    _displayJoinGroupDialog(context, _groupCodeTextController.text, true);
+                    _displayJoinGroupDialog(context, groupCodeTextController.text, true);
                   }
                 }
 
@@ -201,7 +201,7 @@ class GroupsSection extends StatelessWidget {
                       title: Text(group.name),
                       onTap: () {
                         MyNavUtils.navigateTo(context,
-                            GroupScreen(group: group, isOwner: isOwner));
+                            GroupScreen(group: group, isOwner: true)); // Todo Temporaily allow everyone to edit
                       },
                       trailing: isOwner
                           ? PopupMenuButton<int>(
