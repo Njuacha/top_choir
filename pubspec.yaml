@@ -40,6 +40,9 @@ dependencies:
   cloud_firestore: ^4.15.5
   firebase_dynamic_links: ^5.4.14
   bubble_tab_indicator: ^0.1.6
+  image_picker: ^1.0.7
+  firebase_storage: ^11.6.10
+  uuid: ^4.3.3
 
 dev_dependencies:
   flutter_test:

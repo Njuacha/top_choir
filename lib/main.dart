@@ -21,6 +21,9 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
 colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.indigo).copyWith(background: const Color(0xFFEFEFEF)),
+        filledButtonTheme: FilledButtonThemeData(style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.all(12)
+        ))
       ),
       home: const AuthGate(),
     );

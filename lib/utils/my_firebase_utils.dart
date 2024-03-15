@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 
 class MyFirebaseUtils {
   static final firestoreInstance = getFirebaseFirestoreInstance();
   static final firebaseAuthInstance = getFirebaseAuth();
+  static final storageInstance = FirebaseStorage.instance;
 
   static FirebaseFirestore getFirebaseFirestoreInstance() {
     final instance = FirebaseFirestore.instance;

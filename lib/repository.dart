@@ -1,7 +1,10 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:top_choir/utils/my_firebase_utils.dart';
+import 'package:uuid/uuid.dart';
 
 import 'model/group.dart';
 import 'model/song.dart';
@@ -18,6 +21,8 @@ class Repository {
 
   static FirebaseFirestore firestoreInstance() =>
       MyFirebaseUtils.firestoreInstance;
+
+  static FirebaseStorage firebaseStorage() => MyFirebaseUtils.storageInstance;
 
   static Stream<QuerySnapshot<Song>> getSongsStream(String groupId) =>
       firestoreInstance()
@@ -138,5 +143,19 @@ class Repository {
           .doc(groupId)
           .set({});
     }
+  }
+
+  static Future<String> uploadGroupPic(File file, String picturePath) async {
+    var storageRef = firebaseStorage().ref();
+
+    var uniquePath = const Uuid().v4();
+    Reference groupPicRef;
+    if (picturePath.isEmpty) {
+      groupPicRef = storageRef.child("GroupPics/$uniquePath");
+    } else {
+      groupPicRef = firebaseStorage().refFromURL(picturePath);
+    }
+    await groupPicRef.putFile(file);
+    return groupPicRef.getDownloadURL();
   }
 }

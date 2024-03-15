@@ -198,6 +198,10 @@ class GroupsSection extends StatelessWidget {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10)),
                     child: ListTile(
+                      leading: CircleAvatar(
+                          backgroundImage: group.picturePath.isEmpty? null: NetworkImage(group.picturePath),
+                          radius: 24, child: group.picturePath.isEmpty? const Icon(size: 24, Icons.group):null
+                      ),
                       title: Text(group.name),
                       onTap: () {
                         MyNavUtils.navigateTo(context,
